@@ -35,16 +35,27 @@
 
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
     <script>
-      mermaid.initialize({ startOnLoad: false });
-      document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll('code.language-mermaid').forEach(function (el) {
-          var div = document.createElement('div');
-          div.className = 'mermaid';
-          div.textContent = el.textContent;
-          el.parentNode.replaceWith(div);
+      if (typeof window.mermaid !== 'undefined' && window.mermaid) {
+        window.mermaid.initialize({ startOnLoad: false });
+        document.addEventListener("DOMContentLoaded", function () {
+          document.querySelectorAll('code.language-mermaid').forEach(function (el) {
+            var div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = el.textContent;
+            el.parentNode.replaceWith(div);
+          });
+          try {
+            var runResult = window.mermaid.run();
+            if (runResult && typeof runResult.then === 'function') {
+              runResult.catch(function (error) {
+                console.error('Mermaid failed to run:', error);
+              });
+            }
+          } catch (error) {
+            console.error('Mermaid failed to run:', error);
+          }
         });
-        mermaid.run();
-      });
+      }
     </script>
 
   </body>
